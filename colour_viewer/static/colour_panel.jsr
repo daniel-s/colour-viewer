@@ -1,0 +1,146 @@
+function DropDown({pallettes, change_callback}) {
+    // Set the options for the available pallettes.
+    const pallette_options = [];
+    for (let i=0; i<pallettes.length; i++) {
+        pallette_options.push(<option key={i}>{pallettes[i].pallette}</option>);
+    };
+
+    return (<select onChange={change_callback} >
+              {pallette_options}
+            </select>);
+}
+function InputFields({no_of_fields}) {
+    const input_fields = [];
+    for (let i=0; i<no_of_fields; i++) {
+        input_fields.push(<input key={i} type="number" />);
+    }
+    return <div>{input_fields}</div>;
+}
+
+function lookup_pallette (label, pallettes) {
+    for (let i=0; i<pallettes.length; i++) {
+        if (pallettes[i].pallette == label) {
+            return pallettes[i];
+        }
+    }
+    return undefined;
+}
+
+function collect_all_colours () {
+    const forms = document.getElementsByTagName("form");
+    const colours = [];
+    for (let i=0; i<forms.length; i++) {
+        // Get the pallette;
+        const pallette = forms[i].firstElementChild.value;
+        const inputs = forms[i].getElementsByTagName("input");
+        const input_values = [];
+        for (let j=0; j<inputs.length; j++) {
+            // Blank fields become zero.
+            input_values.push(Number(inputs[j].value));
+        }
+        colours.push({
+            pallette,
+            fields: input_values
+        });
+    }
+
+    return colours;
+}
+
+function DisplayColour ({colour}) {
+    return <div className="display_colour"
+                style={{backgroundColor: `rgb(${colour[0]} ${colour[1]} ${colour[2]})`}}>Background colour</div>;
+}
+
+function App (props) {
+
+    const [colours, setColours] = React.useState([]);
+    const [pallettes, setPallettes] = React.useState([]);
+    const [display_colours, setDisplayColours] = React.useState([]);
+
+    // Fetch the pallettes list on first load.
+    React.useEffect( () => {
+        fetch("http://localhost:8000/pallettes_list")
+            .then( request => {
+                return request.json();
+            }).then( json_data => {
+                setPallettes(json_data.pallettes);
+            });
+    }, []);
+
+    function add_colour (ev) {
+        // Have a default kind of pallette type.
+        let new_colour;
+        if (pallettes.length == 0) {
+            new_colour = "rgb";
+        } else {
+            new_colour = pallettes[0].pallette;
+        }
+        setColours([...colours, new_colour]);
+    }
+                               
+    function remove_colour (ev) {
+        // Get rid of the last colour.
+        setColours(colours.slice(0, colours.length-1));
+    }
+
+    function changed_dropdown (ev) {
+        // Get position in the dropdowns.
+        const position = Number(ev.target.parentElement.dataset.id);
+        const selected = ev.target.value;
+        // Get the number of fields for this pallette.
+        
+        // Reset the no. of fields.
+        const new_colours = [...colours];
+        new_colours[position] = selected;
+        console.log(new_colours);
+        setColours(new_colours);
+    }
+
+    function render_function (ev) {
+        const all_colours = collect_all_colours();
+        const response = fetch("http://localhost:8000/convert_colours",
+              {
+                  method: "POST",
+                  headers: {
+                      "Content-Type": "application/json"
+                  },
+                  body: JSON.stringify(all_colours)
+              });
+
+        // Set the display colours using the response.
+        response.then(result => {
+            return result.json();
+        }).then( data => {
+            setDisplayColours(data.converted_colours);
+        });
+    }
+
+    const colour_divs = [];
+    for (let i=0; i<colours.length; i++) {
+        const this_pallette = lookup_pallette(colours[i], pallettes);
+        colour_divs.push(<div key={i}>
+                           <form data-id={i}>
+                             <DropDown key={i} pallettes={pallettes} change_callback={changed_dropdown}/>
+                             <InputFields no_of_fields={this_pallette.no_of_fields} />
+                           </form>
+                         </div>);
+    }
+
+    const rendered_colours = [];
+    for (let i=0; i<display_colours.length; i++) {
+        rendered_colours.push(<DisplayColour colour={display_colours[i]} />);
+    }
+
+    return <div>
+             {colour_divs}
+             <button onClick={remove_colour}>Remove</button>
+             <button onClick={add_colour}>New</button>
+             <button onClick={render_function}>Render</button>
+             <div id="id_rendered_colours">
+               {rendered_colours}
+             </div>
+           </div>;
+}
+
+ReactDOM.render(<App />, document.getElementById("id_colour_viewer_app"));
