@@ -1,0 +1,29 @@
+.display_colour {
+    height: 20vh;
+    margin-top: 1vh;
+    margin-bottom: 1vh;
+}
+
+form {
+    margin-top: 1vh;
+    margin-bottom: 1vh;
+
+    display: flex;
+    flex-direction: column;
+}
+
+form >div {
+    display: flex;
+}
+
+input {
+    display: block;
+    flex-grow: 1;
+}
+
+#id_buttons_wrap {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}
+

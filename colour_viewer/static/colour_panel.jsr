@@ -49,7 +49,7 @@ function collect_all_colours () {
 
 function DisplayColour ({colour}) {
     return <div className="display_colour"
-                style={{backgroundColor: `rgb(${colour[0]} ${colour[1]} ${colour[2]})`}}>Background colour</div>;
+                style={{backgroundColor: `rgb(${colour[0]} ${colour[1]} ${colour[2]})`}}></div>;
 }
 
 function App (props) {
@@ -134,9 +134,11 @@ function App (props) {
 
     return <div>
              {colour_divs}
-             <button onClick={remove_colour}>Remove</button>
-             <button onClick={add_colour}>New</button>
-             <button onClick={render_function}>Render</button>
+             <div id="id_buttons_wrap">
+               <div className="button"><button onClick={remove_colour}>Remove</button></div>
+               <div className="button"><button onClick={add_colour}>New</button></div>
+               <div className="button"><button onClick={render_function}>Render</button></div>
+             </div>
              <div id="id_rendered_colours">
                {rendered_colours}
              </div>
