@@ -1,5 +1,5 @@
 .display_colour {
-    height: 20vh;
+    height: 10vh;
     margin-top: 1vh;
     margin-bottom: 1vh;
 }
@@ -10,6 +10,7 @@ form {
 
     display: flex;
     flex-direction: column;
+    align-items: center;
 }
 
 form >div {
@@ -19,6 +20,14 @@ form >div {
 input {
     display: block;
     flex-grow: 1;
+    width: 15vw;
+    padding: 2px;
+    margin: 4px;
+}
+
+select {
+    margin-bottom: 2px;
+    width: 90vw;
 }
 
 #id_buttons_wrap {

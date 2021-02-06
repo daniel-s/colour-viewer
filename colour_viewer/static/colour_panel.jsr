@@ -1,12 +1,12 @@
-function DropDown({pallettes, change_callback}) {
-    // Set the options for the available pallettes.
-    const pallette_options = [];
-    for (let i=0; i<pallettes.length; i++) {
-        pallette_options.push(<option key={i}>{pallettes[i].pallette}</option>);
+function DropDown({palettes, change_callback}) {
+    // Set the options for the available palettes.
+    const palette_options = [];
+    for (let i=0; i<palettes.length; i++) {
+        palette_options.push(<option key={i}>{palettes[i].palette}</option>);
     };
 
     return (<select onChange={change_callback} >
-              {pallette_options}
+              {palette_options}
             </select>);
 }
 function InputFields({no_of_fields}) {
@@ -17,10 +17,10 @@ function InputFields({no_of_fields}) {
     return <div>{input_fields}</div>;
 }
 
-function lookup_pallette (label, pallettes) {
-    for (let i=0; i<pallettes.length; i++) {
-        if (pallettes[i].pallette == label) {
-            return pallettes[i];
+function lookup_palette (label, palettes) {
+    for (let i=0; i<palettes.length; i++) {
+        if (palettes[i].palette == label) {
+            return palettes[i];
         }
     }
     return undefined;
@@ -30,8 +30,8 @@ function collect_all_colours () {
     const forms = document.getElementsByTagName("form");
     const colours = [];
     for (let i=0; i<forms.length; i++) {
-        // Get the pallette;
-        const pallette = forms[i].firstElementChild.value;
+        // Get the palette;
+        const palette = forms[i].firstElementChild.value;
         const inputs = forms[i].getElementsByTagName("input");
         const input_values = [];
         for (let j=0; j<inputs.length; j++) {
@@ -39,7 +39,7 @@ function collect_all_colours () {
             input_values.push(Number(inputs[j].value));
         }
         colours.push({
-            pallette,
+            palette,
             fields: input_values
         });
     }
@@ -55,26 +55,26 @@ function DisplayColour ({colour}) {
 function App (props) {
 
     const [colours, setColours] = React.useState([]);
-    const [pallettes, setPallettes] = React.useState([]);
+    const [palettes, setPalettes] = React.useState([]);
     const [display_colours, setDisplayColours] = React.useState([]);
 
-    // Fetch the pallettes list on first load.
+    // Fetch the palettes list on first load.
     React.useEffect( () => {
-        fetch("http://localhost:8000/pallettes_list")
+        fetch("http://localhost:8000/palettes_list")
             .then( request => {
                 return request.json();
             }).then( json_data => {
-                setPallettes(json_data.pallettes);
+                setPalettes(json_data.palettes);
             });
     }, []);
 
     function add_colour (ev) {
-        // Have a default kind of pallette type.
+        // Have a default kind of palette type.
         let new_colour;
-        if (pallettes.length == 0) {
+        if (palettes.length == 0) {
             new_colour = "rgb";
         } else {
-            new_colour = pallettes[0].pallette;
+            new_colour = palettes[0].palette;
         }
         setColours([...colours, new_colour]);
     }
@@ -88,12 +88,11 @@ function App (props) {
         // Get position in the dropdowns.
         const position = Number(ev.target.parentElement.dataset.id);
         const selected = ev.target.value;
-        // Get the number of fields for this pallette.
+        // Get the number of fields for this palette.
         
         // Reset the no. of fields.
         const new_colours = [...colours];
         new_colours[position] = selected;
-        console.log(new_colours);
         setColours(new_colours);
     }
 
@@ -118,11 +117,11 @@ function App (props) {
 
     const colour_divs = [];
     for (let i=0; i<colours.length; i++) {
-        const this_pallette = lookup_pallette(colours[i], pallettes);
+        const this_palette = lookup_palette(colours[i], palettes);
         colour_divs.push(<div key={i}>
                            <form data-id={i}>
-                             <DropDown key={i} pallettes={pallettes} change_callback={changed_dropdown}/>
-                             <InputFields no_of_fields={this_pallette.no_of_fields} />
+                             <DropDown key={i} palettes={palettes} change_callback={changed_dropdown}/>
+                             <InputFields no_of_fields={this_palette.no_of_fields} />
                            </form>
                          </div>);
     }

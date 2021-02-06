@@ -8,20 +8,20 @@ from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
-import colour_viewer.pallettes
+import colour_viewer.palettes
 
 def home_page(request):
     return render(request, "colour_viewer/splash.html")
 
 def get_all_converters():
-    # Build the pallettes selector.
+    # Build the palettes selector.
     all_converters = {}
-    for converter in colour_viewer.pallettes.all_pallettes:
+    for converter in colour_viewer.palettes.all_palettes:
         all_converters[converter.get_label()] = converter
     return all_converters
 
 def convert_single_colour(colour_data):
-    converter = get_all_converters()[colour_data["pallette"]]
+    converter = get_all_converters()[colour_data["palette"]]
     rgb_values = converter.convert_colour(colour_data["fields"])
     return rgb_values
 
@@ -34,14 +34,14 @@ def convert_colours(request):
         converted_colour = convert_single_colour(colour)
         all_converted_colours.append(converted_colour)
     # Data integrity check, use the no_of_fields given by the
-    # corresponding pallette to check.
+    # corresponding palette to check.
     return JsonResponse({"converted_colours": all_converted_colours})
 
 @csrf_exempt
-def pallettes_list(request):
-    all_pallettes = colour_viewer.pallettes.all_pallettes
-    all_pallettes_as_json = [{    
-        "pallette": item.get_label(),
+def palettes_list(request):
+    all_palettes = colour_viewer.palettes.all_palettes
+    all_palettes_as_json = [{    
+        "palette": item.get_label(),
         "no_of_fields": item.get_no_of_fields()
-    } for item in all_pallettes]
-    return JsonResponse({"pallettes": all_pallettes_as_json})
+    } for item in all_palettes]
+    return JsonResponse({"palettes": all_palettes_as_json})

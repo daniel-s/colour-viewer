@@ -5,7 +5,7 @@
 import abc
 import colorsys
 
-class AbstractPallette(abc.ABC):
+class AbstractPalette(abc.ABC):
     @classmethod
     def get_no_of_fields(cls):
         return cls.__no_of_fields__
@@ -16,7 +16,7 @@ class AbstractPallette(abc.ABC):
     def convert_colour(self):
         pass
 
-class RGB(AbstractPallette):
+class RGB(AbstractPalette):
     __no_of_fields__ = 3
     def convert_colour(parameters):
         """
@@ -25,14 +25,16 @@ class RGB(AbstractPallette):
         """
         return list(parameters)
 
-class HSV(AbstractPallette):
+class HSV(AbstractPalette):
     __no_of_fields__ = 3
     def convert_colour(parameters):
-        """
-        This is the simplest to convert to RGB, since
-        we just forward the colours.
-        """
         values = colorsys.hsv_to_rgb(*parameters)
         return [value * 255 for value in values]
 
-all_pallettes = [RGB, HSV]
+class BRGB(AbstractPalette):
+    __no_of_fields__ = 3
+    def convert_colour(parameters):
+        multiplier = (255 / 10000)
+        return [value * multiplier for value in parameters]
+
+all_palettes = [RGB, HSV, BRGB]

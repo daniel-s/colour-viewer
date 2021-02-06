@@ -1,4 +1,6 @@
 *_flymake.py
+venv2/*
+*md~
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

@@ -22,7 +22,7 @@ import colour_viewer.views as views
 urlpatterns = [
     path("", views.home_page),
     path("convert_colours", views.convert_colours),
-    path("pallettes_list", views.pallettes_list)
+    path("palettes_list", views.palettes_list)
 ]
 
 if settings.DEBUG:
