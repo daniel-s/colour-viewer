@@ -33,8 +33,6 @@ def convert_colours(request):
     for colour in data:
         converted_colour = convert_single_colour(colour)
         all_converted_colours.append(converted_colour)
-    # Data integrity check, use the no_of_fields given by the
-    # corresponding palette to check.
     return JsonResponse({"converted_colours": all_converted_colours})
 
 @csrf_exempt
