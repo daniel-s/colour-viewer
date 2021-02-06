@@ -1,3 +1,7 @@
+/*
+ * daniel-s
+ */
+ 
 function DropDown({palettes, change_callback}) {
     // Set the options for the available palettes.
     const palette_options = [];
